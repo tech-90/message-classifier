@@ -2,16 +2,20 @@ import streamlit as st
 import pickle
 import string
 import nltk
+import os
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import PorterStemmer
 
-# Ensure the necessary NLTK resources are downloaded
-nltk.download('punkt', download_dir="/app/nltk_data")
-nltk.download('stopwords', download_dir="/app/nltk_data")
+# Use a directory inside the project where Render allows writing
+NLTK_DIR = os.path.join(os.getcwd(), "nltk_data")
 
-# Tell NLTK to use the downloaded data from the specified path
-nltk.data.path.append("/app/nltk_data")
+# Ensure the necessary NLTK resources are downloaded
+nltk.download('punkt', download_dir=NLTK_DIR)
+nltk.download('stopwords', download_dir=NLTK_DIR)
+
+# Tell NLTK to use the downloaded data from this directory
+nltk.data.path.append(NLTK_DIR)
 
 ps = PorterStemmer()
 
@@ -26,7 +30,6 @@ def transform_text(text):
     return " ".join(y)
 
 # Load model & vectorizer using relative paths
-import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 tfidf = pickle.load(open(os.path.join(BASE_DIR, 'vectorizer.pkl'), 'rb'))
 model = pickle.load(open(os.path.join(BASE_DIR, 'model.pkl'), 'rb'))
