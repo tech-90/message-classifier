@@ -6,15 +6,18 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import PorterStemmer
 
-# Download necessary NLTK resources if missing
-nltk.download('punkt')
-nltk.download('stopwords')
+# Ensure the necessary NLTK resources are downloaded
+nltk.download('punkt', download_dir="/app/nltk_data")
+nltk.download('stopwords', download_dir="/app/nltk_data")
+
+# Tell NLTK to use the downloaded data from the specified path
+nltk.data.path.append("/app/nltk_data")
 
 ps = PorterStemmer()
 
 def transform_text(text):
     text = text.lower()
-    text = word_tokenize(text)  # Using word_tokenize safely
+    text = word_tokenize(text)  # Tokenizing safely
 
     y = [i for i in text if i.isalnum()]
     y = [i for i in y if i not in stopwords.words('english') and i not in string.punctuation]
