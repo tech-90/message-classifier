@@ -35,8 +35,15 @@ def transform_text(text):
 
     return " ".join(y)
 
-tfidf=pickle.load(open(r'C:\Users\DUSHYANT\PycharmProjects\PythonProject\.venv\vectorizer.pk1','rb'))
-model=pickle.load(open(r"C:\Users\DUSHYANT\PycharmProjects\PythonProject\.venv\model.pkl",'rb'))
+import os
+
+# Get the directory of the current script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Load files using relative paths
+tfidf = pickle.load(open(os.path.join(BASE_DIR, 'vectorizer.pkl'), 'rb'))
+model = pickle.load(open(os.path.join(BASE_DIR, 'model.pkl'), 'rb'))
+
 
 st.title("Email/SMS Spam Classifier")
 
