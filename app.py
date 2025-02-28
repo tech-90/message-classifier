@@ -7,15 +7,13 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import PorterStemmer
 
-# Use a directory inside the project where Render allows writing
+# Ensure a writable directory
 NLTK_DIR = os.path.join(os.getcwd(), "nltk_data")
 
-# Ensure the necessary NLTK resources are downloaded
+# Force download punkt correctly
+nltk.data.path.append(NLTK_DIR)  # Set download directory first
 nltk.download('punkt', download_dir=NLTK_DIR)
 nltk.download('stopwords', download_dir=NLTK_DIR)
-
-# Tell NLTK to use the downloaded data from this directory
-nltk.data.path.append(NLTK_DIR)
 
 ps = PorterStemmer()
 
