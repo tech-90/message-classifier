@@ -3,35 +3,17 @@ import pickle
 import string
 import nltk
 import os
-import urllib.request
-import zipfile
-from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 
-# ✅ FIX for NLTK punkt error (PLACE THIS HERE)
+# ✅ FIX: Define a writable directory for NLTK
 NLTK_DIR = os.path.join(os.getcwd(), "nltk_data")
 nltk.data.path.append(NLTK_DIR)
 
-# Create the tokenizers directory if it doesn’t exist
-punkt_dir = os.path.join(NLTK_DIR, "tokenizers")
-os.makedirs(punkt_dir, exist_ok=True)  # Ensure the directory exists
-
-# Download and extract 'punkt' tokenizer manually
-PUNKT_URL = "https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/tokenizers/punkt.zip"
-punkt_path = os.path.join(punkt_dir, "punkt.zip")
-
-if not os.path.exists(os.path.join(punkt_dir, "punkt")):
-    print("Downloading punkt.zip manually...")
-    urllib.request.urlretrieve(PUNKT_URL, punkt_path)
-
-    # Extract punkt.zip
-    with zipfile.ZipFile(punkt_path, 'r') as zip_ref:
-        zip_ref.extractall(punkt_dir)
-
+# ✅ Download necessary NLTK data
+nltk.download('punkt', download_dir=NLTK_DIR)
 nltk.download('stopwords', download_dir=NLTK_DIR)
-
-print("Punkt tokenizer installed successfully.")
 
 # ✅ Normal Code Continues
 ps = PorterStemmer()
