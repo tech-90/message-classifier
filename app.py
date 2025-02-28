@@ -3,32 +3,21 @@ import pickle
 import string
 import nltk
 import os
+import urllib.request
+import zipfile
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import PorterStemmer
 
 # Ensure a writable directory
 NLTK_DIR = os.path.join(os.getcwd(), "nltk_data")
+nltk.data.path.append(NLTK_DIR)
 
-import nltk
-import os
-
-# Ensure a writable directory
-NLTK_DIR = os.path.join(os.getcwd(), "nltk_data")
-nltk.data.path.append(NLTK_DIR)  # Set custom path
-
-# Download necessary packages
-nltk.download('punkt', download_dir=NLTK_DIR)
-nltk.download('stopwords', download_dir=NLTK_DIR)
-
-# Explicitly download punkt_tab workaround
+# Download and extract 'punkt' tokenizer manually
 PUNKT_URL = "https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/tokenizers/punkt.zip"
-import urllib.request
-import zipfile
-
 punkt_path = os.path.join(NLTK_DIR, "tokenizers", "punkt.zip")
 
-if not os.path.exists(punkt_path):
+if not os.path.exists(os.path.join(NLTK_DIR, "tokenizers", "punkt")):
     print("Downloading punkt.zip manually...")
     urllib.request.urlretrieve(PUNKT_URL, punkt_path)
 
@@ -36,8 +25,7 @@ if not os.path.exists(punkt_path):
     with zipfile.ZipFile(punkt_path, 'r') as zip_ref:
         zip_ref.extractall(os.path.join(NLTK_DIR, "tokenizers"))
 
-    print("Punkt tokenizer installed successfully.")
-
+nltk.download('stopwords', download_dir=NLTK_DIR)
 
 ps = PorterStemmer()
 
@@ -52,16 +40,22 @@ def transform_text(text):
     return " ".join(y)
 
 # Load model & vectorizer using relative paths
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-tfidf = pickle.load(open(os.path.join(BASE_DIR, 'vectorizer.pkl'), 'rb'))
-model = pickle.load(open(os.path.join(BASE_DIR, 'model.pkl'), 'rb'))
+try:
+    BASE_DIR = os.getcwd()
+    tfidf = pickle.load(open(os.path.join(BASE_DIR, 'vectorizer.pkl'), 'rb'))
+    model = pickle.load(open(os.path.join(BASE_DIR, 'model.pkl'), 'rb'))
+except Exception as e:
+    st.error(f"Error loading model: {e}")
 
 st.title("Email/SMS Spam Classifier")
 input_sms = st.text_area("Enter the message")
 
 if st.button('Predict'):
-    transformed_sms = transform_text(input_sms)
-    vector_input = tfidf.transform([transformed_sms])
-    result = model.predict(vector_input)[0]
+    if input_sms.strip() == "":
+        st.warning("Please enter a message before predicting.")
+    else:
+        transformed_sms = transform_text(input_sms)
+        vector_input = tfidf.transform([transformed_sms])
+        result = model.predict(vector_input)[0]
 
-    st.header("Spam" if result == 1 else "Not Spam")
+        st.header("Spam" if result == 1 else "Not Spam")
