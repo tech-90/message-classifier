@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 
 # ✅ Download necessary NLTK data (directly to default path)
-nltk.download('punkt')
+nltk.download('punkt_tab')
 nltk.download('stopwords')
 
 ps = PorterStemmer()
